@@ -302,7 +302,7 @@ export class Reports extends BasePage<RouteComponentProps<any>, State> {
 
     private renderReport(ctx: ContextApis) {
         if (this.state.error) {
-            return <ErrorNotice error={this.state.error} style={{margin: 20}} />;
+            return <ErrorNotice error={this.state.error} />;
         }
         if (!this.state.charts) {
             return (

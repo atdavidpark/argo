@@ -62,7 +62,7 @@ export const WorkflowEventBindingsList = ({match, location, history}: RouteCompo
                 ],
                 tools: [<NamespaceFilter key='namespace-filter' value={namespace} onChange={setNamespace} />]
             }}>
-            <ErrorNotice error={error} style={{margin: 20}} />
+            <ErrorNotice error={error} />
             {!workflowEventBindings ? (
                 <Loading />
             ) : workflowEventBindings.length === 0 ? (

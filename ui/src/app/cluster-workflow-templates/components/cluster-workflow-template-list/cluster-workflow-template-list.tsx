@@ -75,7 +75,7 @@ export class ClusterWorkflowTemplateList extends BasePage<RouteComponentProps<an
 
     private renderTemplates() {
         if (this.state.error) {
-            return <ErrorNotice error={this.state.error} style={{margin: 20}} />;
+            return <ErrorNotice error={this.state.error} />;
         }
         if (!this.state.templates) {
             return <Loading />;

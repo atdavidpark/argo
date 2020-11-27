@@ -56,9 +56,9 @@ export const EventsPanel = ({namespace, name, kind}: {namespace: string; name: s
                     Hide normal
                 </ToggleButton>
             </div>
-            <ErrorNotice error={error} style={{margin: 20}} />
+            <ErrorNotice error={error} />
             {!events || events.length === 0 ? (
-                <Notice style={{margin: 20}}>
+                <Notice>
                     <i className='fa fa-spin fa-circle-notch' /> Waiting for events. Still waiting for data? Try changing the filters.
                 </Notice>
             ) : (

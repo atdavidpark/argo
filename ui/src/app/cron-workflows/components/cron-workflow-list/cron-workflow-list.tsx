@@ -100,7 +100,7 @@ export class CronWorkflowList extends BasePage<RouteComponentProps<any>, State> 
 
     private renderCronWorkflows() {
         if (this.state.error) {
-            return <ErrorNotice error={this.state.error} style={{margin: 20}} />;
+            return <ErrorNotice error={this.state.error} />;
         }
         if (!this.state.cronWorkflows) {
             return <Loading />;

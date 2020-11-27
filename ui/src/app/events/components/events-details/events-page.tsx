@@ -177,6 +177,7 @@ export const EventsPage = ({history, location, match}: RouteComponentProps<any>)
         return {kind, value, ...x};
     })();
 
+    const emptyGraph = graph.nodes.size === 0;
     return (
         <Page
             title='Events'
@@ -190,24 +191,27 @@ export const EventsPage = ({history, location, match}: RouteComponentProps<any>)
                         {
                             action: () => setShowFlow(!showFlow),
                             iconClassName: showFlow ? 'fa fa-toggle-on' : 'fa fa-toggle-off',
+                            disabled: emptyGraph,
                             title: 'Show event-flow'
                         },
                         {
                             action: () => setShowWorkflows(!showWorkflows),
                             iconClassName: showWorkflows ? 'fa fa-toggle-on' : 'fa fa-toggle-off',
+                            disabled: emptyGraph,
                             title: 'Show workflows'
                         },
                         {
                             action: () => setExpanded(!expanded),
                             iconClassName: expanded ? 'fa fa-compress' : 'fa fa-expand',
+                            disabled: emptyGraph,
                             title: 'Collapse/expand hidden nodes'
                         }
                     ]
                 },
                 tools: [<NamespaceFilter key='namespace-filter' value={namespace} onChange={setNamespace} />]
             }}>
-            <ErrorNotice error={error} style={{margin: 20}} />
-            {graph.nodes.size === 0 ? (
+            <ErrorNotice error={error} />
+            {emptyGraph ? (
                 <ZeroState>
                     <p>Argo Events allow you to trigger workflows, lambadas, and other actions when an event such as a webhooks, message, or a cron schedule occurs.</p>
                     <p>

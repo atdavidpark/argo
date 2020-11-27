@@ -135,7 +135,7 @@ export const WorkflowDetails = ({history, location, match}: RouteComponentProps<
     const renderSummaryTab = () => {
         return (
             <>
-                <ErrorNotice error={error} style={{margin: 20}} />
+                <ErrorNotice error={error} />
                 {!workflow ? (
                     <Loading />
                 ) : (

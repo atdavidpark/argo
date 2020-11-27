@@ -6,6 +6,7 @@ import {WorkflowTemplate} from '../../../../models';
 import {uiUrl} from '../../../shared/base';
 import {ErrorNotice} from '../../../shared/components/error-notice';
 import {ExampleManifests} from '../../../shared/components/example-manifests';
+import {Loading} from '../../../shared/components/loading';
 import {NamespaceFilter} from '../../../shared/components/namespace-filter';
 import {Timestamp} from '../../../shared/components/timestamp';
 import {ZeroState} from '../../../shared/components/zero-state';
@@ -68,8 +69,10 @@ export const WorkflowTemplateList = ({match, location, history}: RouteComponentP
                 },
                 tools: [<NamespaceFilter key='namespace-filter' value={namespace} onChange={setNamespace} />]
             }}>
-            <ErrorNotice error={error} style={{margin: 20}} />
-            {!templates || templates.length === 0 ? (
+            <ErrorNotice error={error} />
+            {!templates ? (
+                <Loading />
+            ) : templates.length === 0 ? (
                 <ZeroState title='No workflow templates'>
                     <p>You can create new templates here or using the CLI.</p>
                     <p>
@@ -77,36 +80,34 @@ export const WorkflowTemplateList = ({match, location, history}: RouteComponentP
                     </p>
                 </ZeroState>
             ) : (
-                <div className='row'>
-                    <div className='columns small-12'>
-                        <div className='argo-table-list'>
-                            <div className='row argo-table-list__head'>
-                                <div className='columns small-1' />
-                                <div className='columns small-5'>NAME</div>
-                                <div className='columns small-3'>NAMESPACE</div>
-                                <div className='columns small-3'>CREATED</div>
-                            </div>
-                            {templates.map(t => (
-                                <Link
-                                    className='row argo-table-list__row'
-                                    key={`${t.metadata.namespace}/${t.metadata.name}`}
-                                    to={uiUrl(`workflow-templates/${t.metadata.namespace}/${t.metadata.name}`)}>
-                                    <div className='columns small-1'>
-                                        <i className='fa fa-clone' />
-                                    </div>
-                                    <div className='columns small-5'>{t.metadata.name}</div>
-                                    <div className='columns small-3'>{t.metadata.namespace}</div>
-                                    <div className='columns small-3'>
-                                        <Timestamp date={t.metadata.creationTimestamp} />
-                                    </div>
-                                </Link>
-                            ))}
+                <>
+                    <div className='argo-table-list'>
+                        <div className='row argo-table-list__head'>
+                            <div className='columns small-1' />
+                            <div className='columns small-5'>NAME</div>
+                            <div className='columns small-3'>NAMESPACE</div>
+                            <div className='columns small-3'>CREATED</div>
                         </div>
-                        <p>
-                            <i className='fa fa-info-circle' /> Workflow templates are reusable templates you can create new workflows from. <ExampleManifests />. {learnMore}.
-                        </p>
+                        {templates.map(t => (
+                            <Link
+                                className='row argo-table-list__row'
+                                key={`${t.metadata.namespace}/${t.metadata.name}`}
+                                to={uiUrl(`workflow-templates/${t.metadata.namespace}/${t.metadata.name}`)}>
+                                <div className='columns small-1'>
+                                    <i className='fa fa-clone' />
+                                </div>
+                                <div className='columns small-5'>{t.metadata.name}</div>
+                                <div className='columns small-3'>{t.metadata.namespace}</div>
+                                <div className='columns small-3'>
+                                    <Timestamp date={t.metadata.creationTimestamp} />
+                                </div>
+                            </Link>
+                        ))}
                     </div>
-                </div>
+                    <p>
+                        <i className='fa fa-info-circle' /> Workflow templates are reusable templates you can create new workflows from. <ExampleManifests />. {learnMore}.
+                    </p>
+                </>
             )}
             <SlidingPanel isShown={sidePanel} onClose={() => setSidePanel(false)}>
                 <WorkflowTemplateCreator namespace={namespace} onCreate={wf => navigation.goto(uiUrl(`workflow-templates/${wf.metadata.namespace}/${wf.metadata.name}`))} />
