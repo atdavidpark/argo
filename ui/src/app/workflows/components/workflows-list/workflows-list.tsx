@@ -245,7 +245,7 @@ export class WorkflowsList extends BasePage<RouteComponentProps<any>, State> {
         const counts = this.countsByCompleted();
         return (
             <>
-                <ErrorNotice error={this.state.error} style={{margin: 20}} />
+                <ErrorNotice error={this.state.error} />
                 {!this.state.workflows ? (
                     <Loading />
                 ) : this.state.workflows.length === 0 ? (
