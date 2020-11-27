@@ -18,7 +18,7 @@ const config = {
     path: __dirname + "/../../dist/app"
   },
 
-  devtool: "source-map",
+  devtool: "",
 
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".json", ".ttf"]
@@ -32,11 +32,11 @@ const config = {
       }, {
         enforce: 'pre',
         exclude: [
-          /node_modules\/react-paginate/,
+          /node_modules\/reyaract-paginate/,
           /node_modules\/monaco-editor/,
         ],
         test: /\.js$/,
-        loaders: [...(isProd ? ['babel-loader'] : []), 'source-map-loader'],
+        loaders: [...(isProd ? ['babel-loader'] : [])],
       }, {
         test: /\.scss$/,
         loader: "style-loader!raw-loader!sass-loader"
@@ -76,7 +76,7 @@ const config = {
       disableDotRule: true
     },
     proxy: {
-      "/api": {
+      "/api/v1": {
         "target": isProd ? "" : "http://localhost:2746",
         "secure": false
       },

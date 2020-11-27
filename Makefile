@@ -56,7 +56,7 @@ AUTH_MODE             := hybrid
 ifeq ($(PROFILE),sso)
 AUTH_MODE             := sso
 endif
-ifeq ($(STATIC_FILES),false)
+ifeq ($(CI),true)
 AUTH_MODE             := client
 endif
 # Which mode to run in:
@@ -77,6 +77,7 @@ ALWAYS_OFFLOAD_NODE_STATUS := true
 endif
 
 override LDFLAGS += \
+  -s -w \
   -X github.com/argoproj/argo.version=$(VERSION) \
   -X github.com/argoproj/argo.buildDate=${BUILD_DATE} \
   -X github.com/argoproj/argo.gitCommit=${GIT_COMMIT} \
@@ -90,9 +91,9 @@ ifneq ($(GIT_TAG),)
 override LDFLAGS += -X github.com/argoproj/argo.gitTag=${GIT_TAG}
 endif
 
-ARGOEXEC_PKGS    := $(shell echo cmd/argoexec            && go list -f '{{ join .Deps "\n" }}' ./cmd/argoexec/            | grep 'argoproj/argo' | cut -c 26-)
-CLI_PKGS         := $(shell echo cmd/argo                && go list -f '{{ join .Deps "\n" }}' ./cmd/argo/                | grep 'argoproj/argo' | cut -c 26-)
-CONTROLLER_PKGS  := $(shell echo cmd/workflow-controller && go list -f '{{ join .Deps "\n" }}' ./cmd/workflow-controller/ | grep 'argoproj/argo' | cut -c 26-)
+ARGOEXEC_PKGS    := $(shell echo cmd/argoexec            && go list -f '{{ join .Deps "\n" }}' ./cmd/argoexec/            | grep 'argoproj/argo/' | cut -c 26-)
+CLI_PKGS         := $(shell echo cmd/argo                && go list -f '{{ join .Deps "\n" }}' ./cmd/argo/                | grep 'argoproj/argo/' | cut -c 26-)
+CONTROLLER_PKGS  := $(shell echo cmd/workflow-controller && go list -f '{{ join .Deps "\n" }}' ./cmd/workflow-controller/ | grep 'argoproj/argo/' | cut -c 26-)
 MANIFESTS        := $(shell find manifests -mindepth 2 -type f)
 E2E_MANIFESTS    := $(shell find test/e2e/manifests -mindepth 2 -type f)
 E2E_EXECUTOR ?= pns
@@ -204,7 +205,7 @@ argo-server.key:
 .PHONY: cli-image
 cli-image: $(CLI_IMAGE_FILE)
 
-$(CLI_IMAGE_FILE): $(CLI_PKGS)
+$(CLI_IMAGE_FILE): $(CLI_PKGS) argo-server.crt argo-server.key
 	$(call docker_build,argocli,argo,$(CLI_IMAGE_FILE))
 
 .PHONY: clis
@@ -257,7 +258,9 @@ codegen: \
 	pkg/apiclient/clusterworkflowtemplate/cluster-workflow-template.swagger.json \
 	pkg/apiclient/cronworkflow/cron-workflow.swagger.json \
 	pkg/apiclient/event/event.swagger.json \
+	pkg/apiclient/eventsource/eventsource.swagger.json \
 	pkg/apiclient/info/info.swagger.json \
+	pkg/apiclient/sensor/sensor.swagger.json \
 	pkg/apiclient/workflow/workflow.swagger.json \
 	pkg/apiclient/workflowarchive/workflow-archive.swagger.json \
 	pkg/apiclient/workflowtemplate/workflow-template.swagger.json \
@@ -329,8 +332,14 @@ pkg/apiclient/cronworkflow/cron-workflow.swagger.json: $(PROTO_BINARIES) $(TYPES
 pkg/apiclient/event/event.swagger.json: $(PROTO_BINARIES) $(TYPES) pkg/apiclient/event/event.proto
 	$(call protoc,pkg/apiclient/event/event.proto)
 
+pkg/apiclient/eventsource/eventsource.swagger.json: $(PROTO_BINARIES) $(TYPES) pkg/apiclient/eventsource/eventsource.proto
+	$(call protoc,pkg/apiclient/eventsource/eventsource.proto)
+
 pkg/apiclient/info/info.swagger.json: $(PROTO_BINARIES) $(TYPES) pkg/apiclient/info/info.proto
 	$(call protoc,pkg/apiclient/info/info.proto)
+
+pkg/apiclient/sensor/sensor.swagger.json: $(PROTO_BINARIES) $(TYPES) pkg/apiclient/sensor/sensor.proto
+	$(call protoc,pkg/apiclient/sensor/sensor.proto)
 
 pkg/apiclient/workflow/workflow.swagger.json: $(PROTO_BINARIES) $(TYPES) pkg/apiclient/workflow/workflow.proto
 	$(call protoc,pkg/apiclient/workflow/workflow.proto)
@@ -343,6 +352,7 @@ pkg/apiclient/workflowtemplate/workflow-template.swagger.json: $(PROTO_BINARIES)
 
 # generate other files for other CRDs
 manifests/base/crds/full/argoproj.io_workflows.yaml: $(GOPATH)/bin/controller-gen $(TYPES)
+	[ -e vendor ] || go mod vendor
 	./hack/crdgen.sh
 
 /usr/local/bin/kustomize:
@@ -386,13 +396,13 @@ test: server/static/files.go
 
 dist/$(PROFILE).yaml: $(MANIFESTS) $(E2E_MANIFESTS) /usr/local/bin/kustomize
 	mkdir -p dist
+	cd test/e2e/manifests/$(PROFILE) && kustomize edit set namespace $(KUBE_NAMESPACE)
 	kustomize build --load_restrictor=none test/e2e/manifests/$(PROFILE) | sed 's/:latest/:$(VERSION)/' | sed 's/pns/$(E2E_EXECUTOR)/'  > dist/$(PROFILE).yaml
 
 .PHONY: install
 install: dist/$(PROFILE).yaml
-	cat test/e2e/manifests/argo-ns.yaml | sed 's/argo/$(KUBE_NAMESPACE)/' > dist/argo-ns.yaml
-	kubectl apply -f dist/argo-ns.yaml
-	kubectl -n $(KUBE_NAMESPACE) apply -l app.kubernetes.io/part-of=argo --prune --force -f dist/$(PROFILE).yaml
+	kubectl create ns $(KUBE_NAMESPACE) --dry-run -o yaml | kubectl apply -f -
+	kubectl apply -l app.kubernetes.io/part-of=argo --prune --force -f dist/$(PROFILE).yaml
 
 .PHONY: pull-build-images
 pull-build-images:
@@ -430,6 +440,7 @@ ifeq ($(RUN_MODE),kubernetes)
 	kubectl -n $(KUBE_NAMESPACE) scale deploy/workflow-controller --replicas 1
 	kubectl -n $(KUBE_NAMESPACE) scale deploy/argo-server --replicas 1
 endif
+	sleep 5s ;# time to allow pod that get deleted to go away
 	kubectl -n $(KUBE_NAMESPACE) wait --for=condition=Ready pod --all -l app --timeout 2m
 	./hack/port-forward.sh
 	# Check dex, minio, postgres and mysql are in hosts file
