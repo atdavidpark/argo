@@ -125,7 +125,7 @@ export const workflowSpecGraph = (s: WorkflowSpec): Graph => {
             template.dag.tasks.forEach(task => {
                 const taskId = idForTask(template.name, task.name);
                 g.nodes.set(taskId, {
-                    label: task.name + (task.template ? ':' + task.template : ''),
+                    label: task.name,
                     genre: 'task',
                     icon: icons.task
                 });
