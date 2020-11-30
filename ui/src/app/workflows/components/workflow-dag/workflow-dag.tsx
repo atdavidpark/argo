@@ -40,7 +40,8 @@ function nodeLabel(n: NodeStatus) {
 
 const classNames = (() => {
     const v: {[label: string]: boolean} = {
-        Suspended: true
+        Suspended: true,
+        Collapsed: true
     };
     Object.entries(NODE_PHASE).forEach(([, label]) => (v[label] = true));
     return v;
@@ -159,8 +160,9 @@ export class WorkflowDag extends React.Component<WorkflowDagProps, WorkflowDagRe
                     if (item.nodeName !== previousCollapsed) {
                         nodes.set(item.nodeName, {
                             label: getMessage(item.nodeName),
-                            genre: 'collapsed',
-                            icon: icons.Collapsed
+                            genre: 'Collapsed',
+                            icon: icons.Collapsed,
+                            classNames: "Collapsed"
                         });
                         edges.set({v: item.parent, w: item.nodeName}, {});
                         previousCollapsed = item.nodeName;
