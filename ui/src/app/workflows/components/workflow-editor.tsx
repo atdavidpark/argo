@@ -39,7 +39,7 @@ export const WorkflowEditor = ({
                 {
                     key: 'manifest',
                     title: 'Manifest',
-                    content: <ObjectEditor type='io.argoproj.workflow.v1alpha1.Workflow' value={template} onChange={x => onChange({...x})} onError={onError} />
+                    content: <ObjectEditor type='io.argoproj.workflow.v1alpha1.Workflow' value={template} onChange={x => onChange({...x})} />
                 }
             ]}
         />

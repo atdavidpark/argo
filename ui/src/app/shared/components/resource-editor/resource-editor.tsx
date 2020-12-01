@@ -38,7 +38,6 @@ export class ResourceEditor<T extends {metadata: kubernetes.ObjectMeta}> extends
                     value={this.state.value}
                     buttons={this.renderButtons()}
                     onChange={value => this.setState({value})}
-                    onError={error => this.setState({error})}
                 />
             </>
         );

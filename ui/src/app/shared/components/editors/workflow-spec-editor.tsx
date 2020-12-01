@@ -236,7 +236,6 @@ export const WorkflowSpecEditor = <T extends WorkflowSpec>(props: {value: T; onC
                             type={type(selectedId)}
                             value={object(selectedId)}
                             onChange={value => setObject(selectedId, value)}
-                            onError={props.onError}
                             buttons={
                                 <>
                                     <Button
@@ -257,7 +256,7 @@ export const WorkflowSpecEditor = <T extends WorkflowSpec>(props: {value: T; onC
                 ) : (
                     <>
                         <h4>Specification</h4>
-                        <ObjectEditor type={type('WorkflowSpec')} value={props.value} onChange={props.onChange} onError={props.onError} />
+                        <ObjectEditor type={type('WorkflowSpec')} value={props.value} onChange={props.onChange} />
                     </>
                 )}
             </SlidingPanel>

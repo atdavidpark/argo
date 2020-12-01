@@ -77,7 +77,7 @@ export const CronWorkflowEditor = ({
                 {
                     key: 'manifest',
                     title: 'Manifest',
-                    content: <ObjectEditor type='io.argoproj.workflow.v1alpha1.CronWorkflow' value={cronWorkflow} onChange={x => onChange({...x})} onError={onError} />
+                    content: <ObjectEditor type='io.argoproj.workflow.v1alpha1.CronWorkflow' value={cronWorkflow} onChange={x => onChange({...x})} />
                 }
             ]}
         />
