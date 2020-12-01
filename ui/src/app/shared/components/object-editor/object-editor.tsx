@@ -19,10 +19,21 @@ const defaultLang = 'yaml';
 
 export const ObjectEditor = <T extends any>({type, value, buttons, onChange}: Props<T>) => {
     const storage = new ScopedLocalStorage('object-editor');
-    const [lang, setLang] = useState<string>(storage.getItem('lang', defaultLang));
     const [error, setError] = useState<Error>();
+    const [lang, setLang] = useState<string>(storage.getItem('lang', defaultLang));
+    const [text, setText] = useState<string>(stringify(value, lang));
 
     useEffect(() => storage.setItem('lang', lang, defaultLang), [lang]);
+    useEffect(() => setText(stringify(parse(text), lang)), [lang]);
+    if (onChange) {
+        useEffect(() => {
+            try {
+                onChange(parse(text));
+            } catch (e) {
+                setError(e);
+            }
+        }, [text]);
+    }
 
     useEffect(() => {
         if (type && lang === 'json') {
@@ -62,23 +73,11 @@ export const ObjectEditor = <T extends any>({type, value, buttons, onChange}: Pr
                 {buttons}
             </div>
             <ErrorNotice error={error} style={{margin: 0}} />
-            <div
-                onBlur={() => {
-                    if (onChange) {
-                        let x;
-                        try {
-                            x = parse(editor.current.editor.getModel().getValue());
-                        } catch (e) {
-                            setError(e);
-                            return;
-                        }
-                        onChange(x);
-                    }
-                }}>
+            <div onBlur={() => setText(editor.current.editor.getModel().getValue())}>
                 <MonacoEditor
                     ref={editor}
                     key='editor'
-                    value={stringify(value, lang)}
+                    value={text}
                     language={lang}
                     height='600px'
                     options={{
