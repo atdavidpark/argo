@@ -162,7 +162,7 @@ export class WorkflowDag extends React.Component<WorkflowDagProps, WorkflowDagRe
                             label: getMessage(item.nodeName),
                             genre: 'Collapsed',
                             icon: icons.Collapsed,
-                            classNames: "Collapsed"
+                            classNames: 'Collapsed'
                         });
                         edges.set({v: item.parent, w: item.nodeName}, {});
                         previousCollapsed = item.nodeName;
