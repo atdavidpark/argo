@@ -4,6 +4,7 @@ import * as React from 'react';
 
 import * as models from '../../../../models';
 import {Button} from '../../../shared/components/button';
+import {DropDownButton} from '../../../shared/components/drop-down-button';
 import {DurationPanel} from '../../../shared/components/duration-panel';
 import {InlineTable} from '../../../shared/components/inline-table/inline-table';
 import {Phase} from '../../../shared/components/phase';
@@ -109,39 +110,39 @@ const WorkflowNodeSummary = (props: Props) => {
             value: <ResourcesDuration resourcesDuration={props.node.resourcesDuration} />
         });
     }
+    const showLogs = (container = 'main') => props.onShowContainerLogs(props.node.id, container);
     return (
         <div className='white-box'>
             <div className='white-box__details'>{<AttributeRows attributes={attributes} />}</div>
             <div>
-                <Button icon='file-alt' type='Secondary' onClick={() => props.onShowYaml && props.onShowYaml(props.node.id)}>
+                <button className='argo-button argo-button--base' onClick={() => props.onShowYaml && props.onShowYaml(props.node.id)}>
                     YAML
                 </button>{' '}
-                {props.node.type === 'Pod' &&
-                    ['main', 'wait', 'init'].map(container => (
-                        <Button
-                            icon='file' type='Secondary'
-                            onClick={() => props.onShowContainerLogs && props.onShowContainerLogs(props.node.id, container)}
-                            title='Examine the "wait" or "init" containers ("init" is only used with artifacts) if there is a problem unrelated to you main process.'>
-                            {container} logs
-                        </Button>
-                    ))}
+                {props.node.type === 'Pod' && props.onShowContainerLogs && (
+                    <DropDownButton
+                        onClick={() => showLogs()}
+                        items={[
+                            {onClick: () => showLogs('init'), value: 'init logs'},
+                            {onClick: () => showLogs('wait'), value: 'wait logs'}
+                        ]}>
+                        main logs
+                    </DropDownButton>
+                )}{' '}
                 {props.links &&
                     props.links
                         .filter(link => link.scope === 'pod')
                         .map(link => (
-                            <Button
-                                key={link.url}
-                                icon='link'
-                                type='Secondary'
-                                onClick={() =>
-                                    link.url
+                            <button
+                                className='argo-button argo-button--base'
+                                onClick={() => {
+                                    document.location.href = link.url
                                         .replace(/\${metadata\.namespace}/g, props.workflow.metadata.namespace)
                                         .replace(/\${metadata\.name}/g, props.node.id)
                                         .replace(/\${status\.startedAt}/g, props.node.startedAt)
-                                        .replace(/\${status\.finishedAt}/g, props.node.finishedAt)
-                                }>
-                                {link.name}
-                            </Button>
+                                        .replace(/\${status\.finishedAt}/g, props.node.finishedAt);
+                                }}>
+                                <i className='fa fa-link' /> {link.name}
+                            </button>
                         ))}
             </div>
         </div>
