@@ -110,14 +110,13 @@ const WorkflowNodeSummary = (props: Props) => {
             value: <ResourcesDuration resourcesDuration={props.node.resourcesDuration} />
         });
     }
-    const showLogs = (container = 'main') => props.onShowContainerLogs(props.node.id, container);
+
+    const showLogs = (x = 'main') => props.onShowContainerLogs(props.node.id, x);
     return (
         <div className='white-box'>
             <div className='white-box__details'>{<AttributeRows attributes={attributes} />}</div>
             <div>
-                <button className='argo-button argo-button--base' onClick={() => props.onShowYaml && props.onShowYaml(props.node.id)}>
-                    YAML
-                </button>{' '}
+                {props.onShowYaml && <Button onClick={() => props.onShowYaml(props.node.id)}>YAML</Button>}{' '}
                 {props.node.type === 'Pod' && props.onShowContainerLogs && (
                     <DropDownButton
                         onClick={() => showLogs()}
@@ -132,8 +131,8 @@ const WorkflowNodeSummary = (props: Props) => {
                     props.links
                         .filter(link => link.scope === 'pod')
                         .map(link => (
-                            <button
-                                className='argo-button argo-button--base'
+                            <Button
+                                icon='link'
                                 onClick={() => {
                                     document.location.href = link.url
                                         .replace(/\${metadata\.namespace}/g, props.workflow.metadata.namespace)
@@ -141,8 +140,8 @@ const WorkflowNodeSummary = (props: Props) => {
                                         .replace(/\${status\.startedAt}/g, props.node.startedAt)
                                         .replace(/\${status\.finishedAt}/g, props.node.finishedAt);
                                 }}>
-                                <i className='fa fa-link' /> {link.name}
-                            </button>
+                                {link.name}
+                            </Button>
                         ))}
             </div>
         </div>
@@ -197,7 +196,7 @@ const EnvVar = (props: {env: models.kubernetes.EnvVar}) => {
     );
 
     return (
-        <pre>
+        <pre key={env.name}>
             {env.name}={env.value || secretValue}
         </pre>
     );

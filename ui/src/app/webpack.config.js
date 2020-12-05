@@ -28,7 +28,7 @@ const config = {
     rules: [
       {
         test: /\.tsx?$/,
-        loaders: [...(isProd ? [] : ["react-hot-loader/webpack"]), `ts-loader?allowTsInNodeModules=true&configFile=${path.resolve("./src/app/tsconfig.json")}`]
+        loaders: [...(isProd ? [] : ["react-hot-loader/webpack"]), `ts-loader?transpileOnly=true&allowTsInNodeModules=true&configFile=${path.resolve("./src/app/tsconfig.json")}`]
       }, {
         enforce: 'pre',
         exclude: [
@@ -66,6 +66,8 @@ const config = {
       from: "node_modules/@fortawesome/fontawesome-free/webfonts", to: "assets/fonts"
     }, {
       from: "../api/openapi-spec/swagger.json", to: "assets/openapi-spec/swagger.json"
+    }, {
+      from: "../api/jsonschema/schema.json", to: "assets/jsonschema/schema.json"
     }, {
       from: 'node_modules/monaco-editor/min/vs/base/browser/ui/codiconLabel/codicon/codicon.ttf', to: "."
     }]),

@@ -251,7 +251,7 @@ export const WorkflowDetails = ({history, location, match}: RouteComponentProps<
                                         node={selectedNode}
                                         workflow={workflow}
                                         links={links}
-                                        onShowContainerLogs={(container: string) => setSidePanel(`logs:${nodeId}:${container}`)}
+                                        onShowContainerLogs={(_, container) => setSidePanel(`logs:${nodeId}:${container}`)}
                                         onShowYaml={() => setSidePanel(`yaml:${nodeId}`)}
                                         archived={false}
                                     />

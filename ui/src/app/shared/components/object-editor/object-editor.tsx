@@ -37,7 +37,7 @@ export const ObjectEditor = <T extends any>({type, value, buttons, onChange}: Pr
 
     useEffect(() => {
         if (type && lang === 'json') {
-            const uri = uiUrl('assets/openapi-spec/swagger.json');
+            const uri = uiUrl('assets/jsonschema/schema.json');
             fetch(uri)
                 .then(res => res.json())
                 .then(swagger => {
