@@ -47,7 +47,11 @@ CONTROLLER_IMAGE_FILE  := dist/controller-image.marker
 
 # perform static compilation
 STATIC_BUILD          ?= true
+ifeq ($(GIT_TREE_STATE),dirty)
+STATIC_FILES          ?= false
+else
 STATIC_FILES          ?= true
+endif
 GOTEST                ?= go test
 PROFILE               ?= minimal
 # whether or not to start the Argo Service in TLS mode
@@ -64,7 +68,7 @@ endif
 # * `kubernetes` run the workflow-controller and argo-server on the Kubernetes cluster
 RUN_MODE              := local
 K3D                   := $(shell if [[ "`which kubectl`" != '' ]] && [[ "`kubectl config current-context`" == "k3d-"* ]]; then echo true; else echo false; fi)
-LOG_LEVEL             := debug
+LOG_LEVEL             := info
 UPPERIO_DB_DEBUG      := 0
 NAMESPACED            := true
 
@@ -401,7 +405,7 @@ dist/$(PROFILE).yaml: $(MANIFESTS) $(E2E_MANIFESTS) /usr/local/bin/kustomize
 
 .PHONY: install
 install: dist/$(PROFILE).yaml
-	kubectl create ns $(KUBE_NAMESPACE) --dry-run -o yaml | kubectl apply -f -
+	kubectl create ns $(KUBE_NAMESPACE) --dry-run=client -o yaml | kubectl apply -f -
 	kubectl apply -l app.kubernetes.io/part-of=argo --prune --force -f dist/$(PROFILE).yaml
 
 .PHONY: pull-build-images
