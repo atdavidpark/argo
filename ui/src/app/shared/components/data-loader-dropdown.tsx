@@ -1,26 +1,21 @@
-import {Select} from 'argo-ui';
+import {DataLoader, Select, SelectOption} from 'argo-ui';
 import * as React from 'react';
-import {useState} from 'react';
 
-export const DataLoaderDropdown = ({onChange, load}: {load: Promise<string[]>; onChange: (value: string) => void}) => {
-    const [list, setList] = useState<string[]>();
-    const [error, setError] = useState<Error>();
-    const [selected, setSelected] = useState('');
-
-    useState(() => {
-        load.then(setList)
-            .then(() => setError(null))
-            .catch(setError);
-    });
+export const DataLoaderDropdown = (props: {load: () => Promise<(string | SelectOption)[]>; onChange: (value: string) => void}) => {
+    const [selected, setSelected] = React.useState('');
 
     return (
-        <Select
-            options={list || (error ? [error.message] : [])}
-            value={selected}
-            onChange={x => {
-                setSelected(x.value);
-                onChange(x.value);
-            }}
-        />
+        <DataLoader load={props.load}>
+            {list => (
+                <Select
+                    options={list}
+                    value={selected}
+                    onChange={x => {
+                        setSelected(x.value);
+                        props.onChange(x.value);
+                    }}
+                />
+            )}
+        </DataLoader>
     );
 };
