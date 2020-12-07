@@ -90,6 +90,13 @@ export const WorkflowDetails = ({history, location, match}: RouteComponentProps<
             };
         });
 
+        items.push({
+            action: () => setSidePanel('logs'),
+            disabled: false,
+            iconClassName: 'fa fa-file',
+            title: 'Logs'
+        });
+
         if (links) {
             links
                 .filter(link => link.scope === 'workflow')
@@ -261,7 +268,7 @@ export const WorkflowDetails = ({history, location, match}: RouteComponentProps<
                     ))}
             </div>
             {workflow && (
-                <SlidingPanel isShown={nodeId && !!sidePanel} onClose={() => setSidePanel(null)}>
+                <SlidingPanel isShown={!!sidePanel} onClose={() => setSidePanel(null)}>
                     {sidePanel && parsedSidePanel.type === 'logs' && (
                         <WorkflowLogsViewer workflow={workflow} nodeId={parsedSidePanel.nodeId} container={parsedSidePanel.container} archived={false} />
                     )}
