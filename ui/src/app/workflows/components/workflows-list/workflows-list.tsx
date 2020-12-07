@@ -20,6 +20,7 @@ import {Pagination, parseLimit} from '../../../shared/pagination';
 import {services} from '../../../shared/services';
 import {Utils} from '../../../shared/utils';
 import * as Actions from '../../../shared/workflow-operations-map';
+import {SubmitFromWorkflowTemplatePanel} from '../submit-from-workflow-template-panel';
 import {WorkflowCreator} from '../workflow-creator';
 import {WorkflowFilters} from '../workflow-filters/workflow-filters';
 import {WorkflowsRow} from '../workflows-row/workflows-row';
@@ -57,8 +58,8 @@ const allBatchActionsEnabled: Actions.OperationDisabled = {
 const LOCAL_STORAGE_KEY = 'ListOptions';
 
 export class WorkflowsList extends BasePage<RouteComponentProps<any>, State> {
-    private get wfInput() {
-        return Utils.tryJsonParse(this.queryParam('new'));
+    private get sidePanel() {
+        return this.queryParam('sidePanel');
     }
 
     private get filterParams() {
@@ -148,7 +149,12 @@ export class WorkflowsList extends BasePage<RouteComponentProps<any>, State> {
                                     {
                                         title: 'Submit New Workflow',
                                         iconClassName: 'fa fa-plus',
-                                        action: () => ctx.navigation.goto('.', {new: '{}'})
+                                        action: () => ctx.navigation.goto('.', {sidePanel: 'submit-new-workflow'})
+                                    },
+                                    {
+                                        title: 'Submit Workflow From Template',
+                                        iconClassName: 'fa fa-plus',
+                                        action: () => ctx.navigation.goto('.', {sidePanel: 'submit-workflow-from-template'})
                                     }
                                 ]
                             }
@@ -180,11 +186,14 @@ export class WorkflowsList extends BasePage<RouteComponentProps<any>, State> {
                             </div>
                             <div className='columns small-12 xlarge-10'>{this.renderWorkflows()}</div>
                         </div>
-                        <SlidingPanel isShown={!!this.wfInput} onClose={() => ctx.navigation.goto('.', {new: null})}>
-                            <WorkflowCreator
-                                namespace={Utils.getNamespace(this.state.namespace)}
-                                onCreate={wf => ctx.navigation.goto(uiUrl(`workflows/${wf.metadata.namespace}/${wf.metadata.name}`))}
-                            />
+                        <SlidingPanel isShown={!!this.sidePanel} onClose={() => ctx.navigation.goto('.', {sidePanel: null})}>
+                            {this.sidePanel === 'submit-new-workflow' && (
+                                <WorkflowCreator
+                                    namespace={Utils.getNamespace(this.state.namespace)}
+                                    onCreate={wf => ctx.navigation.goto(uiUrl(`workflows/${wf.metadata.namespace}/${wf.metadata.name}`))}
+                                />
+                            )}
+                            {this.sidePanel === 'submit-workflow-from-template' && <SubmitFromWorkflowTemplatePanel namespace={Utils.getNamespace(this.state.namespace)} />}
                         </SlidingPanel>
                     </Page>
                 )}

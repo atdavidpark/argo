@@ -8,6 +8,8 @@ const path = require("path");
 
 const isProd = process.env.NODE_ENV === "production";
 
+console.log("isProd=", isProd)
+
 const config = {
   mode: isProd ? "production" : "development",
   entry: {
@@ -28,7 +30,7 @@ const config = {
     rules: [
       {
         test: /\.tsx?$/,
-        loaders: [...(isProd ? [] : ["react-hot-loader/webpack"]), `ts-loader?transpileOnly=true&allowTsInNodeModules=true&configFile=${path.resolve("./src/app/tsconfig.json")}`]
+        loaders: [...(isProd ? [] : ["react-hot-loader/webpack"]), `ts-loader?transpileOnly=${!isProd}&allowTsInNodeModules=true&configFile=${path.resolve("./src/app/tsconfig.json")}`]
       }, {
         enforce: 'pre',
         exclude: [
