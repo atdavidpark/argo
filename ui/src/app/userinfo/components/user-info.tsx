@@ -7,6 +7,7 @@ import {BasePage} from '../../shared/components/base-page';
 import {ErrorNotice} from '../../shared/components/error-notice';
 import {Notice} from '../../shared/components/notice';
 import {services} from '../../shared/services';
+import {CliHelp} from './cli-help';
 
 interface State {
     error?: Error;
@@ -44,6 +45,7 @@ export class UserInfo extends BasePage<RouteComponentProps<any>, State> {
                     <a className='argo-button argo-button--base-o' href={uiUrl('login')}>
                         <i className='fa fa-shield-alt' /> Login / Logout
                     </a>
+                    <CliHelp />
                 </Notice>
             </Page>
         );
