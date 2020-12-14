@@ -413,7 +413,7 @@ export interface Workflow {
     status?: WorkflowStatus;
 }
 
-export const execSpec = (w: Workflow) => w.status.storedWorkflowTemplateSpec || w.spec;
+export const execSpec = (w: Workflow) => Object.assign({}, w.status.storedWorkflowTemplateSpec, w.spec);
 
 export type NodeType = 'Pod' | 'Steps' | 'StepGroup' | 'DAG' | 'Retry' | 'Skipped' | 'TaskGroup' | 'Suspend';
 
