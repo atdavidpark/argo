@@ -3,7 +3,7 @@ import * as classNames from 'classnames';
 import * as React from 'react';
 import {useContext, useEffect, useState} from 'react';
 import {RouteComponentProps} from 'react-router';
-import {Link, Workflow} from '../../../../models';
+import {execSpec, Link, Workflow} from '../../../../models';
 import {uiUrl} from '../../../shared/base';
 import {CostOptimisationNudge} from '../../../shared/components/cost-optimisation-nudge';
 import {ErrorNotice} from '../../../shared/components/error-notice';
@@ -113,20 +113,20 @@ export const WorkflowDetails = ({history, location, match}: RouteComponentProps<
     };
 
     const renderSecurityNudge = () => {
-        if (!workflow.getSpec().securityContext) {
+        if (!execSpec(workflow).securityContext) {
             return <SecurityNudge>This workflow does not have security context set. It maybe possible to set this to run it more securely.</SecurityNudge>;
         }
     };
 
     const renderCostOptimisations = () => {
         const recommendations: string[] = [];
-        if (!workflow.getSpec().activeDeadlineSeconds) {
+        if (!execSpec(workflow).activeDeadlineSeconds) {
             recommendations.push('activeDeadlineSeconds');
         }
-        if (!workflow.getSpec().ttlStrategy) {
+        if (!execSpec(workflow).ttlStrategy) {
             recommendations.push('ttlStrategy');
         }
-        if (!workflow.getSpec().podGC) {
+        if (!execSpec(workflow).podGC) {
             recommendations.push('podGC');
         }
         if (recommendations.length === 0) {

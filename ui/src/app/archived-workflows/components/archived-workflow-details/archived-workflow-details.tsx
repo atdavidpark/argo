@@ -2,7 +2,7 @@ import {NotificationType, Page, SlidingPanel} from 'argo-ui';
 import * as classNames from 'classnames';
 import * as React from 'react';
 import {RouteComponentProps} from 'react-router';
-import {Link, Workflow} from '../../../../models';
+import {execSpec, Link, Workflow} from '../../../../models';
 import {uiUrl} from '../../../shared/base';
 import {BasePage} from '../../../shared/components/base-page';
 import {ErrorNotice} from '../../../shared/components/error-notice';
@@ -159,10 +159,10 @@ export class ArchivedWorkflowDetails extends BasePage<RouteComponentProps<any>, 
                     <div className='argo-container'>
                         <div className='workflow-details__content'>
                             <WorkflowSummaryPanel workflow={this.state.workflow} />
-                            {this.state.workflow.getSpec().arguments && this.state.workflow.getSpec().arguments.parameters && (
+                            {execSpec(this.state.workflow).arguments && execSpec(this.state.workflow).arguments.parameters && (
                                 <React.Fragment>
                                     <h6>Parameters</h6>
-                                    <WorkflowParametersPanel parameters={this.state.workflow.getSpec().arguments.parameters} />
+                                    <WorkflowParametersPanel parameters={execSpec(this.state.workflow).arguments.parameters} />
                                 </React.Fragment>
                             )}
                             <h6>Artifacts</h6>
