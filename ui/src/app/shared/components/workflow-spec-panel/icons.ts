@@ -21,5 +21,5 @@ export const icons: {[genre: string]: Icon} = {
     withItems: 'sync-alt',
     withParam: 'sync-alt',
     withSequence: 'sync-alt',
-    workflow: 'sitemap'
+    workflow: 'stream'
 };

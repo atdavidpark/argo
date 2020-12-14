@@ -113,20 +113,20 @@ export const WorkflowDetails = ({history, location, match}: RouteComponentProps<
     };
 
     const renderSecurityNudge = () => {
-        if (!workflow.spec.securityContext) {
+        if (!workflow.getSpec().securityContext) {
             return <SecurityNudge>This workflow does not have security context set. It maybe possible to set this to run it more securely.</SecurityNudge>;
         }
     };
 
     const renderCostOptimisations = () => {
         const recommendations: string[] = [];
-        if (!workflow.spec.activeDeadlineSeconds) {
+        if (!workflow.getSpec().activeDeadlineSeconds) {
             recommendations.push('activeDeadlineSeconds');
         }
-        if (!workflow.spec.ttlStrategy) {
+        if (!workflow.getSpec().ttlStrategy) {
             recommendations.push('ttlStrategy');
         }
-        if (!workflow.spec.podGC) {
+        if (!workflow.getSpec().podGC) {
             recommendations.push('podGC');
         }
         if (recommendations.length === 0) {

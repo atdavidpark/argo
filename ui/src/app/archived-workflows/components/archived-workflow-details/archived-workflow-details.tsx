@@ -159,10 +159,10 @@ export class ArchivedWorkflowDetails extends BasePage<RouteComponentProps<any>, 
                     <div className='argo-container'>
                         <div className='workflow-details__content'>
                             <WorkflowSummaryPanel workflow={this.state.workflow} />
-                            {this.state.workflow.spec.arguments && this.state.workflow.spec.arguments.parameters && (
+                            {this.state.workflow.getSpec().arguments && this.state.workflow.getSpec().arguments.parameters && (
                                 <React.Fragment>
                                     <h6>Parameters</h6>
-                                    <WorkflowParametersPanel parameters={this.state.workflow.spec.arguments.parameters} />
+                                    <WorkflowParametersPanel parameters={this.state.workflow.getSpec().arguments.parameters} />
                                 </React.Fragment>
                             )}
                             <h6>Artifacts</h6>

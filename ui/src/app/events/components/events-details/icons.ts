@@ -12,7 +12,7 @@ const web = 'cloud';
 export const icons: {[type: string]: Icon} = {
     amqpEventSource: queue,
     awsLambdaTrigger: compute,
-    argoWorkflowTrigger: 'sitemap',
+    argoWorkflowTrigger: 'stream',
     azureEventsHubEventSource: storage,
     calendarEventSource: 'clock',
     collapsed: 'ellipsis-h',

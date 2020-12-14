@@ -75,12 +75,7 @@ export const AppRouter = ({popupManager, history, notificationsManager}: {popupM
                         {
                             title: 'Workflows',
                             path: workflowsUrl + '/' + namespace,
-                            iconClassName: 'fa fa-sitemap'
-                        },
-                        {
-                            title: 'Workflow Event Bindings',
-                            path: workflowsEventBindingsUrl + '/' + namespace,
-                            iconClassName: 'fa fa-cloud'
+                            iconClassName: 'fa fa-stream'
                         },
                         {
                             title: 'Workflow Templates',
@@ -96,6 +91,11 @@ export const AppRouter = ({popupManager, history, notificationsManager}: {popupM
                             title: 'Cron Workflows',
                             path: cronWorkflowsUrl + '/' + namespace,
                             iconClassName: 'fa fa-clock'
+                        },
+                        {
+                            title: 'Workflow Event Bindings',
+                            path: workflowsEventBindingsUrl + '/' + namespace,
+                            iconClassName: 'fa fa-cloud'
                         },
                         {
                             title: 'Archived Workflows',
